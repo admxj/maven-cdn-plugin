@@ -6,6 +6,32 @@
     <version>1.0</version>
     <name>maven CND plugin</name>
 
+    <url>https://github.com/admxj/maven-cdn-plugin</url>
+    <description>
+        支持打包后文件上传到ceph
+    </description>
+    <licenses>
+        <!-- MIT许可证 -->
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>admxj</name>
+            <email>admxj@126.com</email>
+            <url>https://www.admxj.com</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <tag>master</tag>
+        <connection>https://github.com/admxj/maven-cdn-plugin</connection>
+        <developerConnection>https://github.com/admxj</developerConnection>
+        <url>https://github.com/admxj/maven-cdn-plugin.git</url>
+    </scm>
+
     <properties>
         <project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
         <maven.compiler.source>8</maven.compiler.source>
@@ -35,6 +61,12 @@
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>1.9.0</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -60,6 +92,69 @@
                     <compilerVersion>1.8</compilerVersion>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--  必须配置GPG插件用于使用以下配置对组件进行签名 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
 </project>
